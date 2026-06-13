@@ -139,7 +139,7 @@ async function sendNotificationEmail(toEmail, formData, summary, env) {
     body += `${t.footer}\n`;
 
     // Use Mailchannels for free unlimited email delivery
-    await fetch('https://api.mailchannels.net/tx/v1/send', {
+    const mcResp = await fetch('https://api.mailchannels.net/tx/v1/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -149,8 +149,14 @@ async function sendNotificationEmail(toEmail, formData, summary, env) {
         content: [{ type: 'text/plain', value: body }],
       }),
     });
+    if (!mcResp.ok) {
+      const errText = await mcResp.text();
+      console.error(`[Mailchannels] HTTP ${mcResp.status}: ${errText}`);
+    } else {
+      console.log(`[Mailchannels] Email sent to ${toEmail}`);
+    }
   } catch (e) {
-    console.warn('Email failed:', e);
+    console.error('[Mailchannels] Fetch failed:', e.message || e);
   }
 }
 
