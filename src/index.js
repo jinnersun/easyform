@@ -5,12 +5,43 @@
 
 // i18n for notification emails
 const EMAIL_I18N = {
-  en: { subject: '📩 New form submission', title: 'You have a new form submission!', aiLabel: '🤖 AI Summary:', timeLabel: 'Time:', svcLabel: 'Service:' },
-  zh: { subject: '📩 收到新的表单提交', title: '您收到了一个新的表单提交！', aiLabel: '🤖 AI 摘要：', timeLabel: '提交时间：', svcLabel: '服务方：' },
+  en: {
+    subject: '📩 New form submission',
+    title: 'You have a new form submission!',
+    aiSection: '🤖 AI Summary',
+    aiNotEnabled: 'AI summary is not enabled yet. Upgrade to Pro to get AI-powered summaries of every submission.',
+    originalSection: '📋 Original Submission',
+    timeLabel: 'Time',
+    svcLabel: 'Service',
+    footer: 'Powered by EasyForm — the simplest form backend for static sites.',
+  },
+  zh: {
+    subject: '📩 收到新的表单提交',
+    title: '您收到了一个新的表单提交！',
+    aiSection: '🤖 AI 摘要',
+    aiNotEnabled: 'AI 摘要功能尚未开启。升级到 Pro 版即可自动获取每次提交的 AI 智能摘要。',
+    originalSection: '📋 原始提交内容',
+    timeLabel: '提交时间',
+    svcLabel: '服务方',
+    footer: '由 EasyForm 提供支持 — 最简单的静态网站表单后端。',
+  },
 };
 
-function detectLanguage(formData) {
+// Chinese email domains — used to detect user language preference
+const CN_EMAIL_DOMAINS = [
+  '163.com', '126.com', 'qq.com', 'foxmail.com', 'sina.com', 'sina.cn',
+  'sohu.com', 'aliyun.com', 'yeah.net', 'tom.com', '189.cn', 'wo.cn',
+];
+
+function detectLanguage(formData, toEmail) {
+  // 1. Check email domain — Chinese email providers → zh
+  if (toEmail) {
+    const domain = toEmail.split('@')[1]?.toLowerCase();
+    if (domain && CN_EMAIL_DOMAINS.includes(domain)) return 'zh';
+  }
+  // 2. Check form content for Chinese characters
   if (/[\u4e00-\u9fa5]/.test(JSON.stringify(formData))) return 'zh';
+  // 3. Default to English
   return 'en';
 }
 
@@ -58,18 +89,37 @@ async function generateSummary(env, formData) {
 
 async function sendNotificationEmail(toEmail, formData, summary, env) {
   try {
-    const lang = detectLanguage(formData);
+    const lang = detectLanguage(formData, toEmail);
     const t = EMAIL_I18N[lang];
+    const time = new Date().toLocaleString(lang === 'zh' ? 'zh-CN' : 'en-US', { timeZone: 'Asia/Shanghai' });
 
-    let body = `${t.title}\n\n`;
-    body += `${'─'.repeat(50)}\n\n`;
-    for (const [key, value] of Object.entries(formData)) {
-      body += `${key}:\n${value}\n\n`;
+    // ===== AI Summary Section =====
+    let body = `╔══════════════════════════════════╗\n`;
+    body += `║  ${t.aiSection}`;
+    body += ` `.repeat(Math.max(0, 34 - t.aiSection.length - 2)) + `║\n`;
+    body += `╚══════════════════════════════════╝\n\n`;
+
+    if (summary) {
+      body += `${summary}\n\n`;
+    } else {
+      body += `💡 ${t.aiNotEnabled}\n\n`;
     }
-    body += `${'─'.repeat(50)}\n\n`;
-    if (summary) body += `${t.aiLabel}\n${summary}\n\n`;
-    body += `${t.timeLabel} ${new Date().toISOString()}\n`;
-    body += `${t.svcLabel} EasyForm\n`;
+
+    // ===== Original Submission Section =====
+    body += `╔══════════════════════════════════╗\n`;
+    body += `║  ${t.originalSection}`;
+    body += ` `.repeat(Math.max(0, 34 - t.originalSection.length - 2)) + `║\n`;
+    body += `╚══════════════════════════════════╝\n\n`;
+
+    for (const [key, value] of Object.entries(formData)) {
+      body += `【${key}】\n${value}\n\n`;
+    }
+
+    // ===== Footer =====
+    body += `${'─'.repeat(40)}\n`;
+    body += `${t.timeLabel}: ${time}\n`;
+    body += `${t.svcLabel}: EasyForm\n`;
+    body += `${t.footer}\n`;
 
     // Use Resend API for reliable email delivery
     await fetch('https://api.resend.com/emails', {
