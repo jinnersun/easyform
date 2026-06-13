@@ -138,25 +138,28 @@ async function sendNotificationEmail(toEmail, formData, summary, env) {
     body += `${t.svcLabel}: EasyForm\n`;
     body += `${t.footer}\n`;
 
-    // Use Mailchannels for free unlimited email delivery
-    const mcResp = await fetch('https://api.mailchannels.net/tx/v1/send', {
+    // Use Resend for email delivery
+    const resp = await fetch('https://api.resend.com/emails', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      },
       body: JSON.stringify({
-        personalizations: [{ to: [{ email: toEmail }] }],
-        from: { email: 'noreply@easyform.dpdns.org', name: 'EasyForm' },
+        from: 'EasyForm <noreply@easyform.dpdns.org>',
+        to: [toEmail],
         subject: t.subject,
-        content: [{ type: 'text/plain', value: body }],
+        text: body,
       }),
     });
-    if (!mcResp.ok) {
-      const errText = await mcResp.text();
-      console.error(`[Mailchannels] HTTP ${mcResp.status}: ${errText}`);
+    if (!resp.ok) {
+      const errText = await resp.text();
+      console.error(`[Resend] HTTP ${resp.status}: ${errText}`);
     } else {
-      console.log(`[Mailchannels] Email sent to ${toEmail}`);
+      console.log(`[Resend] Email sent to ${toEmail}`);
     }
   } catch (e) {
-    console.error('[Mailchannels] Fetch failed:', e.message || e);
+    console.error('[Resend] Fetch failed:', e.message || e);
   }
 }
 

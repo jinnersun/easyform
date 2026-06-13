@@ -93,7 +93,7 @@ Add it to any HTML page, add `data-easyform` to your `<form>`, and you're done.
 
 - **Runtime**: Cloudflare Workers (edge, 300+ locations worldwide)
 - **AI**: Cloudflare Workers AI (Llama 3 8B)
-- **Email**: Mailchannels (free, included with Cloudflare)
+- **Email**: Resend (free, included with Cloudflare)
 - **Database**: Cloudflare D1 (SQLite at the edge)
 - **Frontend**: Vanilla HTML + Tailwind CSS
 
