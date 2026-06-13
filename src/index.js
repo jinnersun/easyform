@@ -357,6 +357,14 @@ export default {
         );
       }
 
+      // Sitemap + robots for SEO
+      if (path === '/sitemap.xml' || path === '/robots.txt') {
+        const asset = await env.ASSETS.fetch(request);
+        return new Response(asset.body, {
+          headers: { 'Content-Type': path.endsWith('.xml') ? 'application/xml' : 'text/plain', 'Cache-Control': 'public, max-age=3600' },
+        });
+      }
+
       // Fallback to static assets (for CSS, JS, images, etc.)
       return env.ASSETS.fetch(request);
 
