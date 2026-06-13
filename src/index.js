@@ -201,6 +201,11 @@ const EMBED_SCRIPT = `
     });
   }
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', init) : init();
+  // Anonymous domain beacon (no cookies, no IP — just referrer hostname for counting)
+  try {
+    var ref = document.referrer || window.location.href;
+    new Image().src = endpoint + '/beacon?d=' + encodeURIComponent(new URL(ref).hostname);
+  } catch(e) {}
 })();
 `;
 
@@ -331,6 +336,24 @@ export default {
         return new Response(
           JSON.stringify({ status: 'ok', time: new Date().toISOString() }),
           { headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Beacon: count unique domains embedding EasyForm
+      if (path === '/beacon' && request.method === 'GET') {
+        const domain = url.searchParams.get('d') || 'unknown';
+        console.log(`[BEACON] ${domain}`);
+        return new Response(null, { status: 204, headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Cache-Control': 'no-store',
+        }});
+      }
+
+      // Stats: view domain counts (view with npx wrangler tail)
+      if (path === '/stats') {
+        return new Response(
+          JSON.stringify({ hint: 'Check wrangler tail for beacon data' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
