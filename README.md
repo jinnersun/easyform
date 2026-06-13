@@ -119,6 +119,29 @@ npm run deploy
 
 Requires a [Cloudflare account](https://dash.cloudflare.com) (free tier works).
 
+### Custom Domain & Email Setup
+
+To use your own domain and send emails from it:
+
+**1. Bind a custom domain to the Worker**
+- In Cloudflare Dashboard → Workers & Pages → easyform → Triggers → Custom Domains
+- Add your domain (e.g., `form.yourdomain.com`)
+
+**2. Set up Resend for email delivery**
+- Register at [resend.com](https://resend.com) (free: 3,000 emails/month)
+- Add your domain in Resend → Domains
+- Add the DNS records Resend provides (TXT, MX) in Cloudflare DNS
+- Once verified, set the Worker secret:
+  ```bash
+  npx wrangler secret put RESEND_API_KEY
+  ```
+- Update `src/index.js`: change `from` address to `noreply@yourdomain.com`
+- Redeploy: `npm run deploy`
+
+**3. Update landing page URLs**
+- Replace `www.easyform.dpdns.org` with your domain in `public/index.html`
+- Redeploy
+
 ---
 
 ## 📖 Documentation
@@ -222,9 +245,31 @@ MIT © 2026 EasyForm
 
 - **运行时**: Cloudflare Workers（全球 300+ 边缘节点）
 - **AI**: Cloudflare Workers AI（Llama 3 8B）
-- **邮件**: Mailchannels（Cloudflare 免费内置）
+- **邮件**: Resend（免费 3,000 封/月）
 - **数据库**: Cloudflare D1（边缘 SQLite）
 
 ### 📄 开源协议
 
 MIT © 2026 EasyForm
+
+### 🔧 自部署 & 自定义域名
+
+```bash
+git clone https://github.com/jinnersun/easyform.git
+cd easyform
+npm install
+cp .env.example .env  # 填入你的 Cloudflare 凭证
+npm run deploy
+```
+
+**绑定自定义域名**：
+1. Cloudflare Dashboard → Workers & Pages → easyform → Triggers → Custom Domains
+2. 添加你的域名（如 `form.yourdomain.com`）
+
+**配置邮件发送（Resend）**：
+1. 注册 [resend.com](https://resend.com)（免费 3,000 封/月）
+2. 在 Resend → Domains 添加你的域名
+3. 把 Resend 提供的 DNS 记录（TXT、MX）添加到 Cloudflare DNS
+4. 验证通过后，设置 Worker secret：`npx wrangler secret put RESEND_API_KEY`
+5. 修改 `src/index.js` 中的 `from` 地址为 `noreply@yourdomain.com`
+6. 重新部署：`npm run deploy`
