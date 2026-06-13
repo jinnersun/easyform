@@ -840,7 +840,7 @@
       // Also update AI prompt preview
       const aiCode = document.getElementById('aiPromptContent');
       if (aiCode) {
-        aiCode.textContent = 'Add EasyForm to my project:\n- Add this script tag before </body>:\n  <script src="https://www.easyform.dpdns.org/easyform.js" data-email="' + escapeAttr(email) + '"></script>\n- Add data-easyform attribute to any <form> element\n- The form will auto-submit via AJAX and send me an email notification\n- No backend code, no server, no database needed\n- Supports all standard HTML form fields (text, email, textarea, select, checkbox, radio, file)\n- Built-in AI spam filtering (powered by Llama 3 8B)\n- Multi-language support (auto-detect EN/中文)';
+        aiCode.textContent = 'Add EasyForm to my project:\n- Add this script tag before <\/body>:\n  <script src="https://www.easyform.dpdns.org/easyform.js" data-email="' + escapeAttr(email) + '"><\/script>\n- Add data-easyform attribute to any <form> element\n- The form will auto-submit via AJAX and send me an email notification\n- No backend code, no server, no database needed\n- Supports all standard HTML form fields (text, email, textarea, select, checkbox, radio, file)\n- Built-in AI spam filtering (powered by Llama 3 8B)\n- Multi-language support (auto-detect EN/中文)';
       }
     }
 
@@ -871,15 +871,7 @@
     // AI Prompt copy button — fills in email from input
     document.getElementById('copyAiPrompt').addEventListener('click', async () => {
       const email = emailInput.value.trim() || 'you@example.com';
-      const prompt = `Add EasyForm to my project:
-- Add this script tag before </body>:
-  <script src="https://www.easyform.dpdns.org/easyform.js" data-email="${email}"></script>
-- Add data-easyform attribute to any <form> element
-- The form will auto-submit via AJAX and send me an email notification
-- No backend code, no server, no database needed
-- Supports all standard HTML form fields (text, email, textarea, select, checkbox, radio, file)
-- Built-in AI spam filtering (powered by Llama 3 8B)
-- Multi-language support (auto-detect EN/中文)`;
+      const prompt = 'Add EasyForm to my project:\n- Add this script tag before <\/body>:\n  <script src="https://www.easyform.dpdns.org/easyform.js" data-email="' + escapeAttr(email) + '"><\/script>\n- Add data-easyform attribute to any <form> element\n- The form will auto-submit via AJAX and send me an email notification\n- No backend code, no server, no database needed\n- Supports all standard HTML form fields (text, email, textarea, select, checkbox, radio, file)\n- Built-in AI spam filtering (powered by Llama 3 8B)\n- Multi-language support (auto-detect EN/中文)';
       await navigator.clipboard.writeText(prompt);
       const toast = document.getElementById('aiPromptToast');
       toast.classList.remove('hidden');
