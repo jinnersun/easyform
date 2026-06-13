@@ -34,16 +34,23 @@ const CN_EMAIL_DOMAINS = [
 ];
 
 function detectLanguage(formData, toEmail) {
-  // 1. Check email domain — Chinese email providers → zh
+  // 1. Check form content first
+  const text = JSON.stringify(formData);
+  const chineseChars = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
+  const totalChars = text.replace(/\s/g, '').length;
+
+  if (totalChars > 0) {
+    const ratio = chineseChars / totalChars;
+    if (ratio > 0.85) return 'zh';  // clearly Chinese
+    if (ratio < 0.15) return 'en';  // clearly English
+  }
+
+  // 2. Ambiguous content — use email domain as tiebreaker
   if (toEmail) {
     const domain = toEmail.split('@')[1]?.toLowerCase();
     if (domain && CN_EMAIL_DOMAINS.includes(domain)) return 'zh';
   }
-  // 2. Check form content: only use zh if >85% of characters are Chinese
-  const text = JSON.stringify(formData);
-  const chineseChars = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
-  const totalChars = text.replace(/\s/g, '').length;
-  if (totalChars > 0 && chineseChars / totalChars > 0.85) return 'zh';
+
   // 3. Default to English
   return 'en';
 }
