@@ -357,12 +357,13 @@ export default {
         );
       }
 
-      // Sitemap + robots for SEO
+      // Sitemap + robots for SEO (inherit asset headers, override Content-Type + Cache-Control)
       if (path === '/sitemap.xml' || path === '/robots.txt') {
         const asset = await env.ASSETS.fetch(request);
-        return new Response(asset.body, {
-          headers: { 'Content-Type': path.endsWith('.xml') ? 'application/xml' : 'text/plain', 'Cache-Control': 'public, max-age=3600' },
-        });
+        const headers = new Headers(asset.headers);
+        headers.set('Content-Type', (path.endsWith('.xml') ? 'application/xml' : 'text/plain') + '; charset=utf-8');
+        headers.set('Cache-Control', 'public, max-age=3600');
+        return new Response(asset.body, { status: asset.status, headers });
       }
 
       // Fallback to static assets (for CSS, JS, images, etc.)
