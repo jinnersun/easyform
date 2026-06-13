@@ -268,6 +268,37 @@ export default {
         );
       }
 
+      // Waitlist — collect emails for Pro launch
+      if (path === '/waitlist' && request.method === 'POST') {
+        const { email } = await request.json();
+        if (!email || !email.includes('@')) {
+          return new Response(
+            JSON.stringify({ error: 'Valid email required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        // Store in D1 (future) — for now, forward to Resend as a notification
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: 'EasyForm Waitlist <onboarding@resend.dev>',
+            to: ['358042175@163.com'],
+            subject: '🎉 New Pro waitlist signup',
+            text: `New waitlist signup:\n\nEmail: ${email}\nTime: ${new Date().toISOString()}`,
+          }),
+        });
+
+        return new Response(
+          JSON.stringify({ success: true, message: 'Added to waitlist' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       // Health check
       if (path === '/health') {
         return new Response(
