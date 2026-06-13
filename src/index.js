@@ -138,18 +138,15 @@ async function sendNotificationEmail(toEmail, formData, summary, env) {
     body += `${t.svcLabel}: EasyForm\n`;
     body += `${t.footer}\n`;
 
-    // Use Resend API for reliable email delivery
-    await fetch('https://api.resend.com/emails', {
+    // Use Mailchannels for free unlimited email delivery
+    await fetch('https://api.mailchannels.net/tx/v1/send', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: 'EasyForm <noreply@easyform.dpdns.org>',
-        to: [toEmail],
+        personalizations: [{ to: [{ email: toEmail }] }],
+        from: { email: 'noreply@easyform.dpdns.org', name: 'EasyForm' },
         subject: t.subject,
-        text: body,
+        content: [{ type: 'text/plain', value: body }],
       }),
     });
   } catch (e) {

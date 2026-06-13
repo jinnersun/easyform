@@ -193,33 +193,6 @@
       </div>
     </section>
 
-    <!-- AI Agent Prompt Section -->
-    <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <div class="glass-soft rounded-3xl p-6 sm:p-10">
-        <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-          <div class="max-w-xl">
-            <p class="text-sm font-extrabold uppercase tracking-[0.25em] text-amber-300" data-i18n="aiprompt.kicker">AI Agent Ready</p>
-            <h3 class="mt-2 text-2xl font-black tracking-tight" data-i18n="aiprompt.title">Copy this prompt to your AI coding agent</h3>
-            <p class="mt-3 text-slate-300" data-i18n="aiprompt.subtitle">Paste this into Cursor, Copilot, Claude, or any AI agent to integrate EasyForm into your project in seconds.</p>
-          </div>
-          <button id="copyAiPrompt" class="inline-flex items-center gap-2 rounded-2xl border border-amber-300/30 bg-amber-400/10 px-5 py-3 text-sm font-bold text-amber-200 transition hover:bg-amber-400/20">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            <span data-i18n="aiprompt.copy">Copy Prompt</span>
-          </button>
-        </div>
-        <pre id="aiPromptCode" class="mt-5 overflow-x-auto rounded-2xl bg-slate-950/80 p-5 text-sm leading-relaxed text-slate-200"><code>Add EasyForm to my project:
-- Add this script tag before &lt;/body&gt;:
-  &lt;script src="https://www.easyform.dpdns.org/easyform.js" data-email="YOUR_EMAIL"&gt;&lt;/script&gt;
-- Add data-easyform attribute to any &lt;form&gt; element
-- The form will auto-submit via AJAX and send me an email notification
-- No backend code, no server, no database needed
-- Supports all standard HTML form fields (text, email, textarea, select, checkbox, radio, file)
-- Built-in AI spam filtering (powered by Llama 3 8B)
-- Multi-language support (auto-detect EN/中文)</code></pre>
-        <div id="aiPromptToast" class="mt-4 hidden rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-200" data-i18n="aiprompt.copied">Prompt copied! Paste it into your AI agent.</div>
-      </div>
-    </section>
-
     <section id="features" class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-3xl text-center">
         <p class="text-sm font-extrabold uppercase tracking-[0.25em] text-violet-300" data-i18n="features.kicker">Actually built</p>
@@ -304,6 +277,29 @@
             <pre class="code-scroll min-h-[220px] overflow-x-auto rounded-3xl border border-white/10 bg-slate-950/80 p-5 text-sm leading-7 text-slate-200"><code id="generatedCode">&lt;script src="https://www.easyform.dpdns.org/easyform.js"
         data-email="you@example.com"&gt;&lt;/script&gt;</code></pre>
             <div id="copyToast" class="mt-4 hidden rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-200" data-i18n="generator.copied">Copied to clipboard.</div>
+
+            <!-- AI Agent Prompt (embedded in generator card) -->
+            <div class="mt-8 pt-8 border-t border-white/10">
+              <p class="text-xs font-extrabold uppercase tracking-[0.2em] text-amber-300" data-i18n="aiprompt.kicker">AI Agent Ready</p>
+              <h3 class="mt-2 text-lg font-black tracking-tight" data-i18n="aiprompt.title">Copy this prompt to your AI coding agent</h3>
+              <p class="mt-2 text-sm text-slate-400" data-i18n="aiprompt.subtitle">Paste this into Cursor, Copilot, Claude, or any AI agent to integrate EasyForm into your project in seconds.</p>
+              <pre class="mt-4 overflow-x-auto rounded-2xl bg-slate-900/80 p-4 text-xs leading-relaxed text-slate-200"><code id="aiPromptContent">Add EasyForm to my project:
+- Add this script tag before &lt;/body&gt;:
+  &lt;script src="https://www.easyform.dpdns.org/easyform.js" data-email="you@example.com"&gt;&lt;/script&gt;
+- Add data-easyform attribute to any &lt;form&gt; element
+- The form will auto-submit via AJAX and send me an email notification
+- No backend code, no server, no database needed
+- Supports all standard HTML form fields (text, email, textarea, select, checkbox, radio, file)
+- Built-in AI spam filtering (powered by Llama 3 8B)
+- Multi-language support (auto-detect EN/中文)</code></pre>
+              <div class="mt-4 flex items-center gap-3">
+                <button id="copyAiPrompt" class="inline-flex items-center gap-2 rounded-xl border border-amber-300/30 bg-amber-400/10 px-4 py-2 text-sm font-bold text-amber-200 transition hover:bg-amber-400/20">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span data-i18n="aiprompt.copy">Copy Prompt</span>
+                </button>
+                <div id="aiPromptToast" class="hidden rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-200" data-i18n="aiprompt.copied">Prompt copied! Paste it into your AI agent.</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -538,8 +534,8 @@
           <h4 class="text-sm font-bold text-slate-200" data-i18n="footer.legal">Legal</h4>
           <ul class="mt-3 space-y-2 text-sm text-slate-400">
             <li><a href="mailto:358042175@163.com" class="transition hover:text-white" data-i18n="footer.contact">Contact Us</a></li>
-            <li><a href="#" class="transition hover:text-white" data-i18n="footer.privacy">Privacy Policy</a></li>
-            <li><a href="#" class="transition hover:text-white" data-i18n="footer.terms">Terms of Service</a></li>
+            <li><a href="/privacy" class="transition hover:text-white" data-i18n="footer.privacy">Privacy Policy</a></li>
+            <li><a href="/terms" class="transition hover:text-white" data-i18n="footer.terms">Terms of Service</a></li>
           </ul>
         </div>
       </div>
@@ -841,6 +837,11 @@
     function updateGeneratedCode() {
       const email = emailInput.value.trim() || 'you@example.com';
       generatedCode.textContent = '<script src="https://www.easyform.dpdns.org/easyform.js"\n        data-email="' + escapeAttr(email) + '"><\/script>';
+      // Also update AI prompt preview
+      const aiCode = document.getElementById('aiPromptContent');
+      if (aiCode) {
+        aiCode.textContent = 'Add EasyForm to my project:\n- Add this script tag before </body>:\n  <script src="https://www.easyform.dpdns.org/easyform.js" data-email="' + escapeAttr(email) + '"></script>\n- Add data-easyform attribute to any <form> element\n- The form will auto-submit via AJAX and send me an email notification\n- No backend code, no server, no database needed\n- Supports all standard HTML form fields (text, email, textarea, select, checkbox, radio, file)\n- Built-in AI spam filtering (powered by Llama 3 8B)\n- Multi-language support (auto-detect EN/中文)';
+      }
     }
 
     emailInput.addEventListener('input', updateGeneratedCode);
@@ -867,10 +868,19 @@
       setTimeout(() => toast.classList.add('hidden'), 2200);
     });
 
-    // AI Prompt copy button
+    // AI Prompt copy button — fills in email from input
     document.getElementById('copyAiPrompt').addEventListener('click', async () => {
-      const code = document.getElementById('aiPromptCode').textContent;
-      await navigator.clipboard.writeText(code);
+      const email = emailInput.value.trim() || 'you@example.com';
+      const prompt = `Add EasyForm to my project:
+- Add this script tag before </body>:
+  <script src="https://www.easyform.dpdns.org/easyform.js" data-email="${email}"></script>
+- Add data-easyform attribute to any <form> element
+- The form will auto-submit via AJAX and send me an email notification
+- No backend code, no server, no database needed
+- Supports all standard HTML form fields (text, email, textarea, select, checkbox, radio, file)
+- Built-in AI spam filtering (powered by Llama 3 8B)
+- Multi-language support (auto-detect EN/中文)`;
+      await navigator.clipboard.writeText(prompt);
       const toast = document.getElementById('aiPromptToast');
       toast.classList.remove('hidden');
       setTimeout(() => toast.classList.add('hidden'), 2200);
