@@ -357,17 +357,15 @@ export default {
         );
       }
 
-      // Sitemap + robots for SEO
+      // Sitemap + robots for SEO (inherit asset headers, override Content-Type + Cache-Control)
       if (path === '/sitemap.xml' || path === '/robots.txt') {
         const asset = await env.ASSETS.fetch(request);
-        const isXml = path.endsWith('.xml');
-        // Clone headers from asset, then override key SEO headers
-        const newHeaders = new Headers(asset.headers);
-        newHeaders.set('Content-Type', isXml ? 'application/xml; charset=utf-8' : 'text/plain; charset=utf-8');
-        newHeaders.set('Cache-Control', 'public, max-age=3600');
+        const headers = new Headers(asset.headers);
+        headers.set('Content-Type', (path.endsWith('.xml') ? 'application/xml' : 'text/plain') + '; charset=utf-8');
+        headers.set('Cache-Control', 'public, max-age=3600');
         // Fix broken HSTS: max-age=0 with preload is contradictory and may block Googlebot
-        newHeaders.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-        return new Response(asset.body, { status: asset.status, headers: newHeaders });
+        headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+        return new Response(asset.body, { status: asset.status, headers });
       }
 
       // Fallback to static assets (for CSS, JS, images, etc.)
