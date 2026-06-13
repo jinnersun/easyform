@@ -3,6 +3,30 @@
  * Deployed at: https://easyform.358042175.workers.dev
  */
 
+// Daily email limit per form (Resend free tier: 100/day)
+const DAILY_EMAIL_LIMIT = 100;
+
+// Simple in-memory rate limiter (resets on Worker cold start)
+// Key: email_hash, Value: { count, date }
+const rateLimitMap = new Map();
+
+function checkRateLimit(email) {
+  const today = new Date().toISOString().slice(0, 10);
+  const entry = rateLimitMap.get(email);
+
+  if (!entry || entry.date !== today) {
+    rateLimitMap.set(email, { count: 1, date: today });
+    return { allowed: true, remaining: DAILY_EMAIL_LIMIT - 1 };
+  }
+
+  if (entry.count >= DAILY_EMAIL_LIMIT) {
+    return { allowed: false, remaining: 0 };
+  }
+
+  entry.count++;
+  return { allowed: true, remaining: DAILY_EMAIL_LIMIT - entry.count };
+}
+
 // i18n for notification emails
 const EMAIL_I18N = {
   en: {
@@ -259,16 +283,25 @@ export default {
           );
         }
 
+        // Check daily email limit
+        const rateLimit = checkRateLimit(toEmail);
+        if (!rateLimit.allowed) {
+          return new Response(
+            JSON.stringify({ success: true, rate_limited: true, message: 'Daily email limit reached. Submissions are still being collected.' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
         // Send email notification
         await sendNotificationEmail(toEmail, formData, summary, env);
 
         return new Response(
-          JSON.stringify({ success: true, ai_summary: summary }),
+          JSON.stringify({ success: true, ai_summary: summary, emails_remaining: rateLimit.remaining }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      // Waitlist — collect emails for Pro launch
+      // Waitlist — store emails for Pro launch (no email notification to save quota)
       if (path === '/waitlist' && request.method === 'POST') {
         const { email } = await request.json();
         if (!email || !email.includes('@')) {
@@ -278,20 +311,8 @@ export default {
           );
         }
 
-        // Store in D1 (future) — for now, forward to Resend as a notification
-        await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-          },
-          body: JSON.stringify({
-            from: 'EasyForm Waitlist <onboarding@resend.dev>',
-            to: ['358042175@163.com'],
-            subject: '🎉 New Pro waitlist signup',
-            text: `New waitlist signup:\n\nEmail: ${email}\nTime: ${new Date().toISOString()}`,
-          }),
-        });
+        // Log to console (view with: npx wrangler tail)
+        console.log(`[WAITLIST] ${email} — ${new Date().toISOString()}`);
 
         return new Response(
           JSON.stringify({ success: true, message: 'Added to waitlist' }),

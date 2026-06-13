@@ -193,6 +193,33 @@
       </div>
     </section>
 
+    <!-- AI Agent Prompt Section -->
+    <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="glass-soft rounded-3xl p-6 sm:p-10">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+          <div class="max-w-xl">
+            <p class="text-sm font-extrabold uppercase tracking-[0.25em] text-amber-300" data-i18n="aiprompt.kicker">AI Agent Ready</p>
+            <h3 class="mt-2 text-2xl font-black tracking-tight" data-i18n="aiprompt.title">Copy this prompt to your AI coding agent</h3>
+            <p class="mt-3 text-slate-300" data-i18n="aiprompt.subtitle">Paste this into Cursor, Copilot, Claude, or any AI agent to integrate EasyForm into your project in seconds.</p>
+          </div>
+          <button id="copyAiPrompt" class="inline-flex items-center gap-2 rounded-2xl border border-amber-300/30 bg-amber-400/10 px-5 py-3 text-sm font-bold text-amber-200 transition hover:bg-amber-400/20">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span data-i18n="aiprompt.copy">Copy Prompt</span>
+          </button>
+        </div>
+        <pre id="aiPromptCode" class="mt-5 overflow-x-auto rounded-2xl bg-slate-950/80 p-5 text-sm leading-relaxed text-slate-200"><code>Add EasyForm to my project:
+- Add this script tag before &lt;/body&gt;:
+  &lt;script src="https://www.easyform.dpdns.org/easyform.js" data-email="YOUR_EMAIL"&gt;&lt;/script&gt;
+- Add data-easyform attribute to any &lt;form&gt; element
+- The form will auto-submit via AJAX and send me an email notification
+- No backend code, no server, no database needed
+- Supports all standard HTML form fields (text, email, textarea, select, checkbox, radio, file)
+- Built-in AI spam filtering (powered by Llama 3 8B)
+- Multi-language support (auto-detect EN/中文)</code></pre>
+        <div id="aiPromptToast" class="mt-4 hidden rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-200" data-i18n="aiprompt.copied">Prompt copied! Paste it into your AI agent.</div>
+      </div>
+    </section>
+
     <section id="features" class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-3xl text-center">
         <p class="text-sm font-extrabold uppercase tracking-[0.25em] text-violet-300" data-i18n="features.kicker">Actually built</p>
@@ -530,6 +557,11 @@
         'nav.github': 'Open Source',
         'buttons.free': 'Get Started Free',
         'buttons.waitlist': 'Join Waitlist',
+        'aiprompt.kicker': 'AI Agent Ready',
+        'aiprompt.title': 'Copy this prompt to your AI coding agent',
+        'aiprompt.subtitle': 'Paste this into Cursor, Copilot, Claude, or any AI agent to integrate EasyForm into your project in seconds.',
+        'aiprompt.copy': 'Copy Prompt',
+        'aiprompt.copied': 'Prompt copied! Paste it into your AI agent.',
         'hero.badge': 'MIT open source on GitHub',
         'hero.live': 'Free plan available today',
         'hero.title1': 'Form backend in',
@@ -633,6 +665,11 @@
         'nav.github': '开源',
         'buttons.free': '免费开始',
         'buttons.waitlist': '加入等待名单',
+        'aiprompt.kicker': 'AI Agent 就绪',
+        'aiprompt.title': '复制这段提示词给你的 AI 编程助手',
+        'aiprompt.subtitle': '粘贴到 Cursor、Copilot、Claude 或任何 AI 编程工具中，几秒内集成 EasyForm。',
+        'aiprompt.copy': '复制提示词',
+        'aiprompt.copied': '已复制！粘贴到你的 AI 编程助手中。',
         'hero.badge': 'MIT 开源，托管在 GitHub',
         'hero.live': '免费版现已可用',
         'hero.title1': '只需',
@@ -783,6 +820,15 @@
         textarea.remove();
       }
       const toast = document.getElementById('copyToast');
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 2200);
+    });
+
+    // AI Prompt copy button
+    document.getElementById('copyAiPrompt').addEventListener('click', async () => {
+      const code = document.getElementById('aiPromptCode').textContent;
+      await navigator.clipboard.writeText(code);
+      const toast = document.getElementById('aiPromptToast');
       toast.classList.remove('hidden');
       setTimeout(() => toast.classList.add('hidden'), 2200);
     });
