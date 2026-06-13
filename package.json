@@ -1,0 +1,14 @@
+{
+  "name": "easyform",
+  "version": "1.0.0",
+  "description": "The simplest form backend for your static site",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "source .env && wrangler dev",
+    "deploy": "source .env && wrangler deploy"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

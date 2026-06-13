@@ -1,0 +1,14 @@
+name = "easyform"
+main = "src/index.js"
+compatibility_date = "2024-04-01"
+
+# Workers AI binding (for AI spam filtering + summarization)
+[ai]
+binding = "AI"
+
+# Static assets (landing page)
+[assets]
+directory = "./public"
+
+# Secrets (set via wrangler CLI, NOT committed to git)
+# wrangler secret put RESEND_API_KEY
