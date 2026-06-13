@@ -39,8 +39,11 @@ function detectLanguage(formData, toEmail) {
     const domain = toEmail.split('@')[1]?.toLowerCase();
     if (domain && CN_EMAIL_DOMAINS.includes(domain)) return 'zh';
   }
-  // 2. Check form content for Chinese characters
-  if (/[\u4e00-\u9fa5]/.test(JSON.stringify(formData))) return 'zh';
+  // 2. Check form content: only use zh if >85% of characters are Chinese
+  const text = JSON.stringify(formData);
+  const chineseChars = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
+  const totalChars = text.replace(/\s/g, '').length;
+  if (totalChars > 0 && chineseChars / totalChars > 0.85) return 'zh';
   // 3. Default to English
   return 'en';
 }

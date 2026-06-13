@@ -760,7 +760,7 @@
 
     function updateGeneratedCode() {
       const email = emailInput.value.trim() || 'you@example.com';
-      generatedCode.textContent = '<script src="' + window.location.origin + '/easyform.js"\n        data-email="' + escapeAttr(email) + '"><\/script>';
+      generatedCode.textContent = '<script src="https://www.easyform.dpdns.org/easyform.js"\n        data-email="' + escapeAttr(email) + '"><\/script>';
     }
 
     emailInput.addEventListener('input', updateGeneratedCode);
